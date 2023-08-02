@@ -1,0 +1,115 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <deque>
+#include <unordered_map>
+
+using namespace std;
+
+// Структура, представляющая пользователя
+struct User {
+    string name;
+    string password;
+};
+
+// Класс, представляющий чат
+class Chat {
+private:
+    unordered_map<string, User> users; // Список зарегистрированных пользователей
+    unordered_map<string, deque<string>> messages; // Список сообщений для каждого пользователя
+public:
+    // Регистрация пользователя
+    void registerUser(string login, string password, string name) {
+        User user = {name, password};
+        users[login] = user;
+        cout << "Пользователь " << login << " зарегистрирован" << endl;
+    }
+
+    // Вход в чат
+    bool login(string login, string password) {
+        if (users.count(login) == 0 || users[login].password != password) {
+            cout << "Неверный логин или пароль" << endl;
+            return false;
+        }
+        cout << "Вход выполнен успешно" << endl;
+        return true;
+    }
+
+    // Отправка сообщения
+    void sendMessage(string from, string to, string message) {
+        if (users.count(to) == 0) {
+            cout << "Пользователь " << to << " не найден" << endl;
+            return;
+        }
+        messages[to].push_back(from + ": " + message);
+        cout << "Сообщение отправлено пользователю " << to << endl;
+    }
+
+    // Вывод всех сообщений для пользователя
+    void printMessages(string login) {
+        if (messages.count(login) == 0) {
+            cout << "У вас нет сообщений" << endl;
+            return;
+        }
+        cout << "Сообщения для пользователя " << login << ":" << endl;
+        for (string message : messages[login]) {
+            cout << message << endl;
+        }
+    }
+};
+
+int main() {
+    Chat chat;
+    int choice = 0;
+    string login, password, name, to, message;
+
+    while (choice != 4) {
+        // Вывод меню
+        cout << "Выберите действие:" << endl;
+        cout << "1. Регистрация" << endl;
+        cout << "2. Вход в чат" << endl;
+        cout << "3. Отправить сообщение" << endl;
+        cout << "4. Выйти из программы" << endl;
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                // Регистрация пользователей
+                cout << "Введите логин: ";
+                cin >> login;
+                cout << "Введите пароль: ";
+                cin >> password;
+                cout << "Введите имя: ";
+                cin >> name;
+                chat.registerUser(login, password, name);
+                break;
+            case 2:
+                // Вход в чат
+                cout << "Введите логин: ";
+                cin >> login;
+                cout << "Введите пароль: ";
+                cin >> password;
+                chat.login(login, password);
+                break;
+            case 3:
+                // Отправка сообщений
+                cout << "Введите логин отправителя: ";
+                cin >> login;
+                cout << "Введите логин получателя: ";
+                cin >> to;
+                cout << "Введите сообщение: ";
+                cin >> message;
+                chat.sendMessage(login, to, message);
+                break;
+            case 4:
+                // Выход из программы
+                break;
+            default:
+                cout << "Неверный выбор" << endl;
+                break;
+        }
+    }
+
+    return 0;
+}
